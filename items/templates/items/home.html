@@ -1,0 +1,91 @@
+{% extends 'items/base.html' %}
+{% load static %}
+
+{% block title %}Smart Lost &amp; Found | Home{% endblock %}
+
+{% block content %}
+<!-- Hero Section (Figure 8.1 - Report Page 27) -->
+<section class="hero-section">
+  <h1 class="hero-title">Find What You Lost. Return What You Found.</h1>
+  <p class="hero-subtitle">Report items, search the records and get smart match suggestions</p>
+
+  <!-- Search Pill Form -->
+  <form action="{% url 'search' %}" method="GET" class="search-pill-container">
+    <input
+      type="text"
+      name="q"
+      id="main-search-input"
+      class="search-pill-input"
+      placeholder="Search by item name, place or category..."
+      value="{{ q }}"
+      autocomplete="off"
+    >
+    <button type="submit" class="search-pill-btn">Search</button>
+  </form>
+
+  <!-- Quick Action Buttons -->
+  <div class="action-cards-row">
+    <a href="{% url 'report_item' status='lost' %}" class="btn-action btn-action-lost">
+      <i class="fa-solid fa-triangle-exclamation"></i>
+      <span>Report Lost Item</span>
+    </a>
+    <a href="{% url 'report_item' status='found' %}" class="btn-action btn-action-found">
+      <i class="fa-solid fa-circle-check"></i>
+      <span>Report Found Item</span>
+    </a>
+  </div>
+</section>
+
+<!-- Recent Reports Section (Figure 8.1 - Report Page 27) -->
+<section>
+  <div class="section-header-row">
+    <h2 class="section-title">Recent Reports</h2>
+    <a href="{% url 'search' %}" class="section-link">View all items &rarr;</a>
+  </div>
+
+  <div class="item-grid" id="items-grid">
+    {% for item in recent_items %}
+      <div class="report-item-card">
+        <!-- Initials Header Block with Exact Colors from Report -->
+        <div class="card-initials-badge" style="background-color: {{ item.card_color }};">
+          {% if item.photo %}
+            <img src="{{ item.photo.url }}" alt="{{ item.title }}">
+          {% else %}
+            <span>{{ item.initials }}</span>
+          {% endif %}
+        </div>
+
+        <div class="card-content">
+          <h3 class="card-title">{{ item.title }}</h3>
+          <div class="card-place">
+            <i class="fa-solid fa-location-dot" style="color: #64748b; font-size: 0.85rem;"></i>
+            <span>{{ item.place }}</span>
+          </div>
+        </div>
+
+        <div class="card-footer">
+          <span class="status-badge badge-{{ item.status|lower }}">{{ item.status|upper }}</span>
+          <a href="{% url 'item_detail' pk=item.pk %}" class="card-view-link">View &rarr;</a>
+        </div>
+      </div>
+    {% empty %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: #fff; border-radius: 12px;">
+        <p style="color: #64748b;">No reported items yet. Click above to report a lost or found item!</p>
+      </div>
+    {% endfor %}
+  </div>
+
+  <!-- Smart Match Banner (Exact text and design from Report Page 27) -->
+  {% if smart_match %}
+    <div class="smart-match-banner">
+      <span class="star-icon">&#9733;</span>
+      <span>Smart Match: {{ smart_match.message }}</span>
+    </div>
+  {% else %}
+    <div class="smart-match-banner">
+      <span class="star-icon">&#9733;</span>
+      <span>Smart Match: "Black Wallet" (Lost) may match a Found report from Central Library - 92% similarity</span>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

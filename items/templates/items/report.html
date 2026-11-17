@@ -1,0 +1,112 @@
+{% extends 'items/base.html' %}
+{% load static %}
+
+{% block title %}Smart Lost &amp; Found | Report a {{ status_title }} Item{% endblock %}
+
+{% block content %}
+<section class="report-card">
+  <h1>Report a {{ status_title }} Item</h1>
+  <p class="report-subtitle">Fill in the details so that the finder or the admin can match your item</p>
+
+  <form id="report-form" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="form-grid-2">
+      <!-- Item Name -->
+      <div class="form-group">
+        <label for="item">Item name</label>
+        <input
+          type="text"
+          id="item"
+          name="title"
+          placeholder="e.g., Black leather wallet"
+          value="{{ form.title.value|default:'' }}"
+          required
+        >
+      </div>
+
+      <!-- Category -->
+      <div class="form-group">
+        <label for="category">Category</label>
+        <select id="category" name="category">
+          <option value="Accessories" {% if form.category.value == 'Accessories' %}selected{% endif %}>Accessories</option>
+          <option value="Electronics" {% if form.category.value == 'Electronics' %}selected{% endif %}>Electronics</option>
+          <option value="Documents" {% if form.category.value == 'Documents' %}selected{% endif %}>Documents</option>
+          <option value="Clothing" {% if form.category.value == 'Clothing' %}selected{% endif %}>Clothing</option>
+          <option value="Keys" {% if form.category.value == 'Keys' %}selected{% endif %}>Keys</option>
+          <option value="Other" {% if form.category.value == 'Other' %}selected{% endif %}>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-grid-2">
+      <!-- Place where lost / found -->
+      <div class="form-group">
+        <label for="place">Place where {{ status|lower }}</label>
+        <input
+          type="text"
+          id="place"
+          name="place"
+          placeholder="e.g., Central library, 2nd floor"
+          value="{{ form.place.value|default:'' }}"
+          required
+        >
+      </div>
+
+      <!-- Date lost / found -->
+      <div class="form-group">
+        <label for="date">Date {{ status|lower }}</label>
+        <input
+          type="date"
+          id="date"
+          name="date"
+          value="{{ form.date.value|default:'' }}"
+          required
+        >
+      </div>
+    </div>
+
+    <!-- Description -->
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        name="description"
+        rows="4"
+        placeholder="Contains ID card and two bank cards. Brown stitching on the edge..."
+      >{{ form.description.value|default:'' }}</textarea>
+    </div>
+
+    <!-- Photo (optional) -->
+    <div class="form-group">
+      <label for="photo">Photo (optional)</label>
+      <input type="file" id="photo" name="photo" accept="image/*" class="file-input">
+      <div id="file-chosen-text" style="font-size: 0.85rem; color: #64748b; margin-top: 4px;"></div>
+    </div>
+
+    <!-- Submit Button Row -->
+    <div class="report-btn-row">
+      <button type="submit" class="btn-submit">Submit Report</button>
+    </div>
+
+    <!-- Green Status Indicator from Report Page 20 -->
+    <div class="report-status-preview">
+      <span>&#10003;</span>
+      <span>Your report will be saved with status: <strong>{{ status|upper }}</strong></span>
+    </div>
+  </form>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Set default date to today if empty
+  document.addEventListener('DOMContentLoaded', () => {
+    const dateInput = document.getElementById('date');
+    if (dateInput && !dateInput.value) {
+      const today = new Date().toISOString().split('T')[0];
+      dateInput.value = today;
+    }
+  });
+</script>
+{% endblock %}

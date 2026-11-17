@@ -1,0 +1,96 @@
+{% extends 'items/base.html' %}
+{% load static %}
+
+{% block title %}Smart Lost &amp; Found | Search Records{% endblock %}
+
+{% block content %}
+<section>
+  <div style="margin-bottom: 24px; text-align: center;">
+    <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text);">Search &amp; Filter Reports</h1>
+    <p style="color: var(--text-muted); font-size: 0.95rem;">Type to instantly filter items using client-side JavaScript or submit to query the database</p>
+  </div>
+
+  <!-- Search Filter Bar -->
+  <div style="background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.04); margin-bottom: 30px;">
+    <form method="GET" action="{% url 'search' %}" style="display: flex; gap: 12px; flex-wrap: wrap;">
+      <input
+        type="text"
+        id="search"
+        name="q"
+        value="{{ q }}"
+        placeholder="Search items by name, place, description..."
+        style="flex: 2; min-width: 220px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;"
+      >
+
+      <select
+        name="status"
+        style="flex: 1; min-width: 130px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;"
+      >
+        <option value="">All Statuses</option>
+        <option value="lost" {% if status_filter == 'lost' %}selected{% endif %}>Lost</option>
+        <option value="found" {% if status_filter == 'found' %}selected{% endif %}>Found</option>
+        <option value="claimed" {% if status_filter == 'claimed' %}selected{% endif %}>Claimed</option>
+      </select>
+
+      <select
+        name="category"
+        style="flex: 1; min-width: 140px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;"
+      >
+        <option value="">All Categories</option>
+        {% for cat in categories %}
+          <option value="{{ cat }}" {% if category_filter == cat %}selected{% endif %}>{{ cat }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit" class="btn-submit" style="padding: 10px 22px;">Filter</button>
+      {% if q or status_filter or category_filter %}
+        <a href="{% url 'search' %}" style="display: flex; align-items: center; color: #64748b; font-size: 0.9rem; text-decoration: underline; padding: 0 10px;">Reset</a>
+      {% endif %}
+    </form>
+  </div>
+
+  <!-- Item List Cards -->
+  <div class="item-grid">
+    {% for item in items %}
+      <div class="report-item-card">
+        <div class="card-initials-badge" style="background-color: {{ item.card_color }};">
+          {% if item.photo %}
+            <img src="{{ item.photo.url }}" alt="{{ item.title }}">
+          {% else %}
+            <span>{{ item.initials }}</span>
+          {% endif %}
+        </div>
+
+        <div class="card-content">
+          <h3 class="card-title">{{ item.title }}</h3>
+          <div class="card-place">
+            <i class="fa-solid fa-location-dot" style="color: #64748b; font-size: 0.85rem;"></i>
+            <span>{{ item.place }}</span>
+          </div>
+          <div style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">
+            <span>Category: <strong>{{ item.category }}</strong></span> &bull;
+            <span>Date: {{ item.date }}</span>
+          </div>
+          {% if item.description %}
+            <p style="font-size: 0.85rem; color: #475569; margin-bottom: 12px; line-height: 1.4;">{{ item.description|truncatewords:15 }}</p>
+          {% endif %}
+        </div>
+
+        <div class="card-footer">
+          <span class="status-badge badge-{{ item.status|lower }}">{{ item.status|upper }}</span>
+          <a href="{% url 'item_detail' pk=item.pk %}" class="card-view-link">View Details &rarr;</a>
+        </div>
+      </div>
+    {% empty %}
+      <div style="grid-column: 1 / -1; text-align: center; padding: 40px; background: #fff; border-radius: 12px; border: 1px solid var(--border);">
+        <p style="color: #64748b; font-size: 1.05rem; margin-bottom: 12px;">No items match your query.</p>
+        <a href="{% url 'report_item' status='lost' %}" class="btn-submit" style="display: inline-block; text-decoration: none;">Report This Item</a>
+      </div>
+    {% endfor %}
+  </div>
+
+  <div id="no-search-results" style="display: none; text-align: center; padding: 40px; background: #fff; border-radius: 12px; border: 1px solid var(--border); margin-top: 20px;">
+    <p style="color: #64748b; font-size: 1.05rem;">No items match your live search filter.</p>
+  </div>
+</section>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Lost and Found | Report Lost Item (Practice 1)</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+  <!-- Navigation Bar (Chapter 7.1) -->
+  <header>
+    <a href="{% url 'home' %}" class="logo" style="color: #fff; text-decoration: none; font-weight: 700; font-size: 1.2rem;">Smart Lost &amp; Found</a>
+    <ul class="nav-links">
+      <li><a href="{% url 'home' %}">Home</a></li>
+      <li><a href="{% url 'report_item' status='lost' %}" class="active">Report Lost</a></li>
+      <li><a href="{% url 'report_item' status='found' %}">Report Found</a></li>
+      <li><a href="{% url 'search' %}">Search</a></li>
+    </ul>
+  </header>
+
+  <main>
+    <!-- Report Form (Chapter 7.1) -->
+    <section class="report-card">
+      <h1>Report a Lost Item</h1>
+      <p class="report-subtitle">Fill in the details so that the finder or the admin can match your item</p>
+
+      <form id="report-form" method="POST" action="{% url 'report_item' status='lost' %}">
+        {% csrf_token %}
+        <label for="item">Item name</label>
+        <input type="text" id="item" name="title" value="Black leather wallet" required>
+
+        <label for="category">Category</label>
+        <select id="category" name="category">
+          <option>Accessories</option>
+          <option>Electronics</option>
+          <option>Documents</option>
+        </select>
+
+        <label for="place">Place where lost</label>
+        <input type="text" id="place" name="place" value="Central library, 2nd floor" required>
+
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="3">Contains ID card and two bank cards. Brown stitching on the edge.</textarea>
+
+        <div style="text-align: right; margin-top: 10px;">
+          <button type="submit">Submit Report</button>
+        </div>
+
+        <div class="report-status-preview" style="margin-top: 16px;">
+          <span>&#10003;</span>
+          <span>Your report will be saved with status: <strong>LOST</strong></span>
+        </div>
+      </form>
+    </section>
+
+    <!-- Item list with search (Chapter 7.1 & 7.2) -->
+    <section class="report-card">
+      <h3 style="margin-bottom: 12px; font-size: 1.1rem; color: var(--text);">Instant Live Search Demo</h3>
+      <input type="text" id="search" placeholder="Search items..." style="margin-bottom: 16px;">
+      <div class="item-card" style="border: 1px solid #e2e8f0; padding: 12px; margin-bottom: 8px; border-radius: 8px;">
+        <strong>Black Wallet</strong> &ndash; Central Library
+      </div>
+      <div class="item-card" style="border: 1px solid #e2e8f0; padding: 12px; margin-bottom: 8px; border-radius: 8px;">
+        <strong>Blue Water Bottle</strong> &ndash; Canteen
+      </div>
+      <div class="item-card" style="border: 1px solid #e2e8f0; padding: 12px; margin-bottom: 8px; border-radius: 8px;">
+        <strong>Android Phone</strong> &ndash; Block B, Room 204
+      </div>
+      <div class="item-card" style="border: 1px solid #e2e8f0; padding: 12px; margin-bottom: 8px; border-radius: 8px;">
+        <strong>College ID Card</strong> &ndash; Bus Stand
+      </div>
+    </section>
+  </main>
+
+  <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

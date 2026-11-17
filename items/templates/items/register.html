@@ -1,0 +1,37 @@
+{% extends 'items/base.html' %}
+{% load static %}
+
+{% block title %}Smart Lost &amp; Found | Register{% endblock %}
+
+{% block content %}
+<section class="report-card" style="max-width: 480px;">
+  <h1>Create Account</h1>
+  <p class="report-subtitle">Register to submit and track your lost &amp; found items</p>
+
+  <form method="POST">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="form-group">
+        <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+        {{ field }}
+        {% if field.help_text %}
+          <div style="font-size: 0.78rem; color: #64748b; margin-top: 4px;">{{ field.help_text }}</div>
+        {% endif %}
+        {% for error in field.errors %}
+          <div style="color: #ef4444; font-size: 0.8rem; margin-top: 2px;">{{ error }}</div>
+        {% endfor %}
+      </div>
+    {% endfor %}
+
+    <div style="margin-top: 20px;">
+      <button type="submit" class="btn-submit" style="width: 100%;">Complete Registration</button>
+    </div>
+  </form>
+
+  <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center;">
+    <p style="font-size: 0.88rem; color: #64748b;">
+      Already have an account? <a href="{% url 'login' %}" style="color: var(--primary); font-weight: 600;">Sign in here</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

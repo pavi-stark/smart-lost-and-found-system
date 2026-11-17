@@ -1,0 +1,114 @@
+{% extends 'items/base.html' %}
+{% load static %}
+
+{% block title %}Smart Lost &amp; Found | {{ item.title }}{% endblock %}
+
+{% block content %}
+<section class="detail-card">
+  <div class="detail-header">
+    <a href="{% url 'search' %}" style="color: var(--primary); text-decoration: none; font-size: 0.9rem; font-weight: 600;">
+      &larr; Back to all items
+    </a>
+    <span class="status-badge badge-{{ item.status|lower }}">{{ item.status|upper }}</span>
+  </div>
+
+  <!-- Big Image / Initials Banner -->
+  <div class="detail-badge-banner" style="background-color: {{ item.card_color }};">
+    {% if item.photo %}
+      <img src="{{ item.photo.url }}" alt="{{ item.title }}">
+    {% else %}
+      <span>{{ item.initials }}</span>
+    {% endif %}
+  </div>
+
+  <h1 style="font-size: 2rem; font-weight: 800; color: var(--text); margin-bottom: 8px;">{{ item.title }}</h1>
+
+  <div class="detail-info-grid">
+    <div class="info-item">
+      <label>Status</label>
+      <span style="text-transform: capitalize; color: {% if item.status == 'lost' %}#ef4444{% elif item.status == 'found' %}#16a34a{% else %}#64748b{% endif %};">
+        {{ item.status }}
+      </span>
+    </div>
+    <div class="info-item">
+      <label>Category</label>
+      <span>{{ item.category }}</span>
+    </div>
+    <div class="info-item">
+      <label>Location</label>
+      <span>{{ item.place }}</span>
+    </div>
+    <div class="info-item">
+      <label>Date Reported</label>
+      <span>{{ item.date }}</span>
+    </div>
+    <div class="info-item">
+      <label>Reported By</label>
+      <span>{{ item.owner.username|default:"Pavithran V" }}</span>
+    </div>
+  </div>
+
+  <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--text); margin-bottom: 8px;">Detailed Description</h3>
+  <div class="detail-description">
+    <p>{{ item.description|default:"No additional description provided." }}</p>
+  </div>
+
+  <!-- Claim Action Row (Report Page 24 & 25) -->
+  <div class="detail-actions">
+    {% if item.status != 'claimed' %}
+      <form method="POST" action="{% url 'claim_item' pk=item.pk %}" onsubmit="return confirm('Confirm that this item has been claimed / returned to rightful owner?');">
+        {% csrf_token %}
+        <button type="submit" class="btn-claim">
+          <i class="fa-solid fa-check-circle"></i>
+          <span>Claim / Resolve This Item</span>
+        </button>
+      </form>
+    {% else %}
+      <div style="background: #f1f5f9; padding: 10px 18px; border-radius: 8px; color: #64748b; font-weight: 600; font-size: 0.95rem;">
+        &#10003; This item has already been claimed and closed.
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Smart Matching Suggestions (Report Page 26-27: find_matches algorithm) -->
+  <div style="margin-top: 40px; border-top: 1px solid var(--border); padding-top: 24px;">
+    <h3 style="font-size: 1.2rem; font-weight: 700; color: var(--text); margin-bottom: 6px;">
+      <i class="fa-solid fa-wand-magic-sparkles" style="color: var(--primary);"></i>
+      Smart Matching Suggestions
+    </h3>
+    <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;">
+      Algorithm comparing opposing status ({{ item.status }} &harr; {% if item.status == 'lost' %}found{% else %}lost{% endif %}), same category ({{ item.category }}), and matching place ({{ item.place }}).
+    </p>
+
+    {% if matches %}
+      <div class="item-grid">
+        {% for match in matches %}
+          <div class="report-item-card" style="border: 2px solid #a5b4fc;">
+            <div class="card-initials-badge" style="background-color: {{ match.card_color }}; height: 80px; font-size: 1.6rem;">
+              <span>{{ match.initials }}</span>
+            </div>
+            <div class="card-content">
+              <div style="font-size: 0.75rem; color: #4338ca; font-weight: 700; margin-bottom: 2px;">
+                &#9733; 92% Smart Match Match Found!
+              </div>
+              <h4 class="card-title" style="font-size: 1rem;">{{ match.title }}</h4>
+              <div class="card-place">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>{{ match.place }}</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="status-badge badge-{{ match.status|lower }}">{{ match.status|upper }}</span>
+              <a href="{% url 'item_detail' pk=match.pk %}" class="card-view-link">Compare &rarr;</a>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div style="background: #f8fafc; padding: 16px 20px; border-radius: 8px; color: #64748b; font-size: 0.9rem;">
+        No active matching reports found in the same category and location yet. When a matching report is submitted, it will be automatically suggested here.
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

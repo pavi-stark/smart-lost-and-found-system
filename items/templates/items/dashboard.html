@@ -1,0 +1,91 @@
+{% extends 'items/base.html' %}
+{% load static %}
+
+{% block title %}Smart Lost &amp; Found | User Dashboard{% endblock %}
+
+{% block content %}
+<section>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+    <div>
+      <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text);">User Dashboard</h1>
+      <p style="color: var(--text-muted); font-size: 0.92rem;">Manage your submitted lost and found reports and track claim resolutions</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <a href="{% url 'report_item' status='lost' %}" class="btn-action btn-action-lost" style="padding: 8px 16px; font-size: 0.88rem;">+ Report Lost</a>
+      <a href="{% url 'report_item' status='found' %}" class="btn-action btn-action-found" style="padding: 8px 16px; font-size: 0.88rem;">+ Report Found</a>
+    </div>
+  </div>
+
+  <!-- Stats Grid -->
+  <div class="stats-cards-grid">
+    <div class="stat-card">
+      <div style="color: #64748b; font-size: 0.85rem; font-weight: 600;">TOTAL REPORTS</div>
+      <div class="stat-number">{{ total }}</div>
+    </div>
+    <div class="stat-card">
+      <div style="color: #ef4444; font-size: 0.85rem; font-weight: 600;">ACTIVE LOST</div>
+      <div class="stat-number" style="color: #ef4444;">{{ lost_count }}</div>
+    </div>
+    <div class="stat-card">
+      <div style="color: #16a34a; font-size: 0.85rem; font-weight: 600;">ACTIVE FOUND</div>
+      <div class="stat-number" style="color: #16a34a;">{{ found_count }}</div>
+    </div>
+    <div class="stat-card">
+      <div style="color: #64748b; font-size: 0.85rem; font-weight: 600;">RESOLVED / CLAIMED</div>
+      <div class="stat-number" style="color: #64748b;">{{ claimed_count }}</div>
+    </div>
+  </div>
+
+  <!-- User Reports Table / Cards -->
+  <div style="background: #ffffff; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,0.04); overflow: hidden;">
+    <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); background: #f8fafc; font-weight: 700; color: var(--text);">
+      Your Submitted Reports
+    </div>
+
+    {% if user_items %}
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border); color: #64748b; font-size: 0.82rem; text-transform: uppercase;">
+              <th style="padding: 12px 20px;">Item</th>
+              <th style="padding: 12px 20px;">Category</th>
+              <th style="padding: 12px 20px;">Place</th>
+              <th style="padding: 12px 20px;">Date</th>
+              <th style="padding: 12px 20px;">Status</th>
+              <th style="padding: 12px 20px; text-align: right;">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for itm in user_items %}
+              <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 14px 20px; font-weight: 600; color: var(--text);">
+                  <div style="display: flex; align-items: center; gap: 10px;">
+                    <span style="display: inline-block; width: 32px; height: 32px; border-radius: 6px; background-color: {{ itm.card_color }}; color: #fff; font-weight: 700; text-align: center; line-height: 32px; font-size: 0.85rem;">
+                      {{ itm.initials }}
+                    </span>
+                    <span>{{ itm.title }}</span>
+                  </div>
+                </td>
+                <td style="padding: 14px 20px; color: #64748b;">{{ itm.category }}</td>
+                <td style="padding: 14px 20px; color: #64748b;">{{ itm.place }}</td>
+                <td style="padding: 14px 20px; color: #64748b;">{{ itm.date }}</td>
+                <td style="padding: 14px 20px;">
+                  <span class="status-badge badge-{{ itm.status|lower }}">{{ itm.status|upper }}</span>
+                </td>
+                <td style="padding: 14px 20px; text-align: right;">
+                  <a href="{% url 'item_detail' pk=itm.pk %}" style="color: var(--primary); font-weight: 600; text-decoration: none;">View &rarr;</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div style="padding: 40px; text-align: center; color: #64748b;">
+        <p>No reports submitted yet.</p>
+        <a href="{% url 'report_item' status='lost' %}" class="btn-submit" style="display: inline-block; margin-top: 10px; text-decoration: none;">Report Lost Item</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

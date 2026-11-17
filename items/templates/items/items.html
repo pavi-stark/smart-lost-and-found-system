@@ -1,0 +1,46 @@
+{% extends 'items/base.html' %}
+{% load static %}
+
+{% block title %}Smart Lost &amp; Found | Practice 3 – Lost Items{% endblock %}
+
+{% block content %}
+<!-- Practice 3 Output Replica (Report Chapter 7.3, Page 22-23) -->
+<div class="browser-frame">
+  <div class="browser-top-bar">
+    <div class="browser-dots">
+      <span class="dot dot-red"></span>
+      <span class="dot dot-yellow"></span>
+      <span class="dot dot-green"></span>
+    </div>
+    <div class="browser-address">http://127.0.0.1:8000/items/</div>
+  </div>
+
+  <div class="browser-body">
+    <h2 style="font-size: 1.8rem; font-weight: 800; color: #0f172a; margin-bottom: 20px;">Lost Items</h2>
+
+    <ul class="practice-items-list" style="list-style-type: disc; margin-left: 24px;">
+      {% for item in items %}
+        <li style="margin-bottom: 12px; font-weight: 500; color: #1e293b;">
+          <strong>{{ item.name }}</strong> &ndash; {{ item.place }}
+        </li>
+      {% empty %}
+        <li>Black Leather Wallet - Central Library</li>
+        <li>Blue Water Bottle - Canteen</li>
+        <li>Android Phone - Block B, Room 204</li>
+        <li>College ID Card - Bus Stand</li>
+        <li>Umbrella - Main Gate</li>
+      {% endfor %}
+    </ul>
+
+    <p class="practice-note">
+      Records are read from the database by the Django view and displayed using the template items.html
+    </p>
+  </div>
+</div>
+
+<div style="max-width: 720px; margin: 20px auto; color: #475569; font-size: 0.95rem; line-height: 1.6;">
+  <p>
+    <strong>Chapter 7.3 Summary:</strong> The lost items entered in the database are displayed on the <code>/items/</code> page. Each record is shown as one list item by the Django template loop <code>{% templatetag openvariable %}% for item in items %{% templatetag closevariable %}</code>. The Lost Items page displays items reported as lost across the college campus.
+  </p>
+</div>
+{% endblock %}

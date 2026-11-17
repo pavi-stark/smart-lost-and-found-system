@@ -1,0 +1,44 @@
+{% extends 'items/base.html' %}
+{% load static %}
+
+{% block title %}Smart Lost &amp; Found | Login{% endblock %}
+
+{% block content %}
+<section class="report-card" style="max-width: 440px;">
+  <h1>Account Login</h1>
+  <p class="report-subtitle">Sign in to manage your lost &amp; found reports and claims</p>
+
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="id_username">Username</label>
+      <input type="text" name="username" id="id_username" class="form-input" placeholder="Enter your username" required>
+    </div>
+
+    <div class="form-group">
+      <label for="id_password">Password</label>
+      <input type="password" name="password" id="id_password" class="form-input" placeholder="Enter your password" required>
+    </div>
+
+    <div style="margin-top: 20px;">
+      <button type="submit" class="btn-submit" style="width: 100%;">Sign In</button>
+    </div>
+  </form>
+
+  <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); text-align: center;">
+    <p style="color: #64748b; font-size: 0.88rem; margin-bottom: 12px;">Quick Demo Accounts (1-Click Test):</p>
+    <div style="display: flex; gap: 8px; justify-content: center;">
+      <a href="{% url 'demo_login' username='pavithran' %}" style="background: #eef2ff; color: #4338ca; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; text-decoration: none; border: 1px solid #c7d2fe;">
+        User: pavithran
+      </a>
+      <a href="{% url 'demo_login' username='admin' %}" style="background: #f1f5f9; color: #334155; padding: 6px 14px; border-radius: 6px; font-size: 0.82rem; font-weight: 600; text-decoration: none; border: 1px solid #cbd5e1;">
+        Admin: admin
+      </a>
+    </div>
+
+    <p style="margin-top: 18px; font-size: 0.88rem; color: #64748b;">
+      Don't have an account? <a href="{% url 'register' %}" style="color: var(--primary); font-weight: 600;">Register here</a>
+    </p>
+  </div>
+</section>
+{% endblock %}

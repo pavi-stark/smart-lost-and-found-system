@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Smart Lost & Found System{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- Navigation Bar (Report Page 19 & 27) -->
+  <header>
+    <a href="{% url 'home' %}" class="logo-container">
+      <div class="logo-badge">?</div>
+      <span class="logo-text">Smart Lost &amp; Found</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="{% url 'home' %}" class="{% if active_tab == 'home' %}active{% endif %}">Home</a></li>
+      <li><a href="{% url 'report_item' status='lost' %}" class="{% if active_tab == 'report_lost' %}active{% endif %}">Report Lost</a></li>
+      <li><a href="{% url 'report_item' status='found' %}" class="{% if active_tab == 'report_found' %}active{% endif %}">Report Found</a></li>
+      <li><a href="{% url 'search' %}" class="{% if active_tab == 'search' %}active{% endif %}">Search</a></li>
+      <li><a href="{% url 'dashboard' %}" class="{% if active_tab == 'dashboard' %}active{% endif %}">Dashboard</a></li>
+      <li><a href="{% url 'items_practice' %}" class="{% if active_tab == 'items_practice' %}active{% endif %}">Items (P3)</a></li>
+
+      {% if user.is_authenticated %}
+        <li><span style="color: #cbd5e1; font-size: 0.88rem; font-weight: 600;">Hi, {{ user.username }}</span></li>
+        <li><a href="{% url 'logout' %}" class="btn-nav-logout">Logout</a></li>
+      {% else %}
+        <li><a href="{% url 'login' %}" class="btn-nav-login">Login</a></li>
+      {% endif %}
+    </ul>
+  </header>
+
+  <!-- Main Content Container -->
+  <main>
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert-box alert-{% if message.tags == 'error' %}info{% else %}{{ message.tags }}{% endif %}">
+          <span>{{ message }}</span>
+        </div>
+      {% endfor %}
+    {% endif %}
+
+    {% block content %}
+    {% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p><strong>Smart Lost and Found System</strong> — Python Full Stack Development</p>
+    <p style="margin-top: 4px; font-size: 0.8rem; color: #64748b;">
+      Internship at Novalis Infotech | Pavithran V (420423104056) | Adhiparasakthi Engineering College
+    </p>
+  </footer>
+
+  <script src="{% static 'js/script.js' %}"></script>
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Lost &amp; Found System | Full Stack Django Web Application</title>
+  <link rel="stylesheet" href="static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    /* Demo Portal Navigation & Mode Bar */
+    .demo-bar {
+      background: #0f172a;
+      color: #94a3b8;
+      padding: 8px 24px;
+      font-size: 0.82rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #1e293b;
+    }
+    .demo-badge-pill {
+      background: #4f46e5;
+      color: #fff;
+      padding: 2px 10px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .view-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-light);
+      cursor: pointer;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0 4px 4px;
+      transition: all 0.2s ease;
+      font-family: inherit;
+    }
+    .view-tab-btn:hover {
+      color: #ffffff;
+    }
+    .view-tab-btn.active {
+      color: var(--active-link);
+      border-bottom: 2px solid var(--active-link);
+    }
+    .app-screen {
+      display: none;
+    }
+    .app-screen.active-screen {
+      display: block;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .django-banner-strip {
+      background: #1e1e38;
+      border: 1px solid #3730a3;
+      border-radius: 10px;
+      padding: 12px 18px;
+      margin-bottom: 24px;
+      color: #e0e7ff;
+      font-size: 0.88rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .code-chip {
+      background: #0b0f19;
+      color: #38bdf8;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 0.82rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top System Bar -->
+  <div class="demo-bar">
+    <div style="display: flex; align-items: center; gap: 10px;">
+      <span class="demo-badge-pill">Internship Project</span>
+      <span>Novalis Infotech &bull; CS3711 Summer Internship Report Implementation &bull; Pavithran V</span>
+    </div>
+    <div style="display: flex; align-items: center; gap: 12px;">
+      <span>Django MVT &bull; Python &bull; MySQL &bull; HTML5 &bull; CSS3 &bull; JS</span>
+      <a href="index.html" style="color: #38bdf8; text-decoration: none; font-weight: 600;">&larr; Back to Portfolio</a>
+    </div>
+  </div>
+
+  <!-- Header & Navigation Bar (Report Page 19 & 27) -->
+  <header>
+    <a href="#" class="logo-container" onclick="switchTab('home')">
+      <div class="logo-badge">?</div>
+      <span class="logo-text">Smart Lost &amp; Found</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><button class="view-tab-btn active" id="tab-home" onclick="switchTab('home')">Home</button></li>
+      <li><button class="view-tab-btn" id="tab-report-lost" onclick="switchTab('report-lost')">Report Lost</button></li>
+      <li><button class="view-tab-btn" id="tab-report-found" onclick="switchTab('report-found')">Report Found</button></li>
+      <li><button class="view-tab-btn" id="tab-search" onclick="switchTab('search')">Search</button></li>
+      <li><button class="view-tab-btn" id="tab-dashboard" onclick="switchTab('dashboard')">Dashboard</button></li>
+      <li><button class="view-tab-btn" id="tab-items-p3" onclick="switchTab('items-p3')">Items (P3)</button></li>
+      <li><button class="btn-nav-login" onclick="switchTab('dashboard')">Login</button></li>
+    </ul>
+  </header>
+
+  <!-- Main Container -->
+  <main>
+
+    <!-- Quick info notification -->
+    <div class="django-banner-strip">
+      <div>
+        <i class="fa-brands fa-python" style="color: #60a5fa; margin-right: 6px;"></i>
+        <span><strong>Live Django Server Available:</strong> Run <span class="code-chip">python manage.py runserver</span> inside <span class="code-chip">lost_and_found/</span> to launch the Python backend on <span class="code-chip">http://127.0.0.1:8000/</span></span>
+      </div>
+      <div>
+        <span style="font-size: 0.8rem; color: #a5b4fc;">MySQL / SQLite dual engine ready</span>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         SCREEN 1: HOME PAGE (Figure 8.1 - Report Page 27)
+         ===================================================================== -->
+    <section id="screen-home" class="app-screen active-screen">
+      <!-- Hero Section -->
+      <div class="hero-section">
+        <h1 class="hero-title">Find What You Lost. Return What You Found.</h1>
+        <p class="hero-subtitle">Report items, search the records and get smart match suggestions</p>
+
+        <!-- Rounded Search Bar (Figure 8.1) -->
+        <div class="search-pill-container">
+          <input
+            type="text"
+            id="home-search-input"
+            class="search-pill-input"
+            placeholder="Search by item name, place or category..."
+          >
+          <button type="button" class="search-pill-btn" onclick="executeSearchFromHome()">Search</button>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-cards-row">
+          <a href="#" class="btn-action btn-action-lost" onclick="switchTab('report-lost')">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span>Report Lost Item</span>
+          </a>
+          <a href="#" class="btn-action btn-action-found" onclick="switchTab('report-found')">
+            <i class="fa-solid fa-circle-check"></i>
+            <span>Report Found Item</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Recent Reports Section -->
+      <div>
+        <div class="section-header-row">
+          <h2 class="section-title">Recent Reports</h2>
+          <a href="#" class="section-link" onclick="switchTab('search')">View all items &rarr;</a>
+        </div>
+
+        <!-- 4 Item Cards (Exact from Figure 8.1 Screenshot) -->
+        <div class="item-grid" id="home-cards-container">
+          <!-- Card 1: Black Wallet (BW - #4f46e5) -->
+          <div class="report-item-card">
+            <div class="card-initials-badge" style="background-color: #4f46e5;">BW</div>
+            <div class="card-content">
+              <h3 class="card-title">Black Wallet</h3>
+              <div class="card-place">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Central Library</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="status-badge badge-lost">LOST</span>
+              <a href="#" class="card-view-link" onclick="openItemModal('Black Wallet', 'Central Library', 'lost', 'Accessories', 'Contains ID card and two bank cards. Brown stitching on the edge.', 'BW', '#4f46e5')">View &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Card 2: Blue Water Bottle (BB - #06b6d4) -->
+          <div class="report-item-card">
+            <div class="card-initials-badge" style="background-color: #06b6d4;">BB</div>
+            <div class="card-content">
+              <h3 class="card-title">Blue Water Bottle</h3>
+              <div class="card-place">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Canteen</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="status-badge badge-found">FOUND</span>
+              <a href="#" class="card-view-link" onclick="openItemModal('Blue Water Bottle', 'Canteen', 'found', 'Accessories', 'Stainless steel blue water bottle with silver cap found on table.', 'BB', '#06b6d4')">View &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Card 3: Android Phone (AP - #ec4899) -->
+          <div class="report-item-card">
+            <div class="card-initials-badge" style="background-color: #ec4899;">AP</div>
+            <div class="card-content">
+              <h3 class="card-title">Android Phone</h3>
+              <div class="card-place">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Block B, Room 204</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="status-badge badge-lost">LOST</span>
+              <a href="#" class="card-view-link" onclick="openItemModal('Android Phone', 'Block B, Room 204', 'lost', 'Electronics', 'Black Android phone with transparent case left during morning session.', 'AP', '#ec4899')">View &rarr;</a>
+            </div>
+          </div>
+
+          <!-- Card 4: ID Card (IC - #f59e0b) -->
+          <div class="report-item-card">
+            <div class="card-initials-badge" style="background-color: #f59e0b;">IC</div>
+            <div class="card-content">
+              <h3 class="card-title">ID Card</h3>
+              <div class="card-place">
+                <i class="fa-solid fa-location-dot"></i>
+                <span>Bus Stand</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <span class="status-badge badge-found">FOUND</span>
+              <a href="#" class="card-view-link" onclick="openItemModal('ID Card', 'Bus Stand', 'found', 'Documents', 'College student ID card with blue ribbon found near bus bay.', 'IC', '#f59e0b')">View &rarr;</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Smart Match Banner (Exact text and design from Figure 8.1 on Page 27) -->
+        <div class="smart-match-banner">
+          <span class="star-icon">&#9733;</span>
+          <span>Smart Match: "Black Wallet" (Lost) may match a Found report from Central Library - 92% similarity</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 2: REPORT LOST ITEM (Report Page 20)
+         ===================================================================== -->
+    <section id="screen-report-lost" class="app-screen">
+      <div class="report-card">
+        <h1>Report a Lost Item</h1>
+        <p class="report-subtitle">Fill in the details so that the finder or the admin can match your item</p>
+
+        <form id="standalone-report-form" onsubmit="handleItemSubmit(event, 'lost')">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="rep-item">Item name</label>
+              <input type="text" id="rep-item" value="Black leather wallet" required>
+            </div>
+            <div class="form-group">
+              <label for="rep-category">Category</label>
+              <select id="rep-category">
+                <option value="Accessories" selected>Accessories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Documents">Documents</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Keys">Keys</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="rep-place">Place where lost</label>
+              <input type="text" id="rep-place" value="Central library, 2nd floor" required>
+            </div>
+            <div class="form-group">
+              <label for="rep-date">Date lost</label>
+              <input type="date" id="rep-date" value="2026-08-11" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="rep-desc">Description</label>
+            <textarea id="rep-desc" rows="4">Contains ID card and two bank cards. Brown stitching on the edge.</textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="rep-file">Photo (optional)</label>
+            <input type="file" id="rep-file" class="file-input">
+          </div>
+
+          <div class="report-btn-row">
+            <button type="submit" class="btn-submit">Submit Report</button>
+          </div>
+
+          <!-- Green Status Banner (Report Page 20) -->
+          <div class="report-status-preview">
+            <span>&#10003;</span>
+            <span>Your report will be saved with status: <strong>LOST</strong></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 3: REPORT FOUND ITEM
+         ===================================================================== -->
+    <section id="screen-report-found" class="app-screen">
+      <div class="report-card">
+        <h1>Report a Found Item</h1>
+        <p class="report-subtitle">Fill in the details so that the owner or the admin can identify the item</p>
+
+        <form onsubmit="handleItemSubmit(event, 'found')">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="found-item">Item name</label>
+              <input type="text" id="found-item" placeholder="e.g., Blue Water Bottle" required>
+            </div>
+            <div class="form-group">
+              <label for="found-category">Category</label>
+              <select id="found-category">
+                <option value="Accessories">Accessories</option>
+                <option value="Electronics">Electronics</option>
+                <option value="Documents">Documents</option>
+                <option value="Clothing">Clothing</option>
+                <option value="Keys">Keys</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="found-place">Place where found</label>
+              <input type="text" id="found-place" placeholder="e.g., Canteen Table 4" required>
+            </div>
+            <div class="form-group">
+              <label for="found-date">Date found</label>
+              <input type="date" id="found-date" value="2026-08-12" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="found-desc">Description</label>
+            <textarea id="found-desc" rows="4" placeholder="Distinctive characteristics, color, where safely kept..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label for="found-file">Photo (optional)</label>
+            <input type="file" id="found-file" class="file-input">
+          </div>
+
+          <div class="report-btn-row">
+            <button type="submit" class="btn-submit">Submit Found Report</button>
+          </div>
+
+          <div class="report-status-preview">
+            <span>&#10003;</span>
+            <span>Your report will be saved with status: <strong>FOUND</strong></span>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 4: SEARCH & FILTER (Practice 2 + Chapter 8)
+         ===================================================================== -->
+    <section id="screen-search" class="app-screen">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text);">Search &amp; Filter Reports</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">Real-time JavaScript DOM search and multi-criteria category filtering</p>
+      </div>
+
+      <div style="background: #ffffff; padding: 20px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.04); margin-bottom: 30px;">
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <input
+            type="text"
+            id="interactive-search-box"
+            placeholder="Search items by name, place, category (e.g., Wallet, Canteen)..."
+            style="flex: 2; min-width: 220px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;"
+            oninput="handleInteractiveFilter()"
+          >
+
+          <select
+            id="filter-status-select"
+            style="flex: 1; min-width: 130px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;"
+            onchange="handleInteractiveFilter()"
+          >
+            <option value="">All Statuses</option>
+            <option value="lost">Lost</option>
+            <option value="found">Found</option>
+            <option value="claimed">Claimed</option>
+          </select>
+
+          <select
+            id="filter-category-select"
+            style="flex: 1; min-width: 140px; padding: 10px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 0.95rem;"
+            onchange="handleInteractiveFilter()"
+          >
+            <option value="">All Categories</option>
+            <option value="Accessories">Accessories</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Documents">Documents</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="item-grid" id="search-results-grid">
+        <!-- Rendered dynamically via JavaScript -->
+      </div>
+      <div id="no-search-results-portal" style="display: none; text-align: center; padding: 40px; background: #fff; border-radius: 12px; border: 1px solid var(--border);">
+        <p style="color: #64748b; font-size: 1.05rem;">No items match your search filter.</p>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 5: PRACTICE 3 – ITEMS PAGE (Report Page 22-23)
+         ===================================================================== -->
+    <section id="screen-items-p3" class="app-screen">
+      <div class="browser-frame">
+        <div class="browser-top-bar">
+          <div class="browser-dots">
+            <span class="dot dot-red"></span>
+            <span class="dot dot-yellow"></span>
+            <span class="dot dot-green"></span>
+          </div>
+          <div class="browser-address">http://127.0.0.1:8000/items/</div>
+        </div>
+
+        <div class="browser-body">
+          <h2 style="font-size: 1.8rem; font-weight: 800; color: #0f172a; margin-bottom: 20px;">Lost Items</h2>
+
+          <ul class="practice-items-list" style="list-style-type: disc; margin-left: 24px;">
+            <li style="margin-bottom: 12px; font-weight: 500; color: #1e293b;">
+              <strong>Black Leather Wallet</strong> &ndash; Central Library
+            </li>
+            <li style="margin-bottom: 12px; font-weight: 500; color: #1e293b;">
+              <strong>Blue Water Bottle</strong> &ndash; Canteen
+            </li>
+            <li style="margin-bottom: 12px; font-weight: 500; color: #1e293b;">
+              <strong>Android Phone</strong> &ndash; Block B, Room 204
+            </li>
+            <li style="margin-bottom: 12px; font-weight: 500; color: #1e293b;">
+              <strong>College ID Card</strong> &ndash; Bus Stand
+            </li>
+            <li style="margin-bottom: 12px; font-weight: 500; color: #1e293b;">
+              <strong>Umbrella</strong> &ndash; Main Gate
+            </li>
+          </ul>
+
+          <p class="practice-note">
+            Records are read from the database by the Django view and displayed using the template items.html
+          </p>
+        </div>
+      </div>
+
+      <div style="max-width: 720px; margin: 20px auto; color: #475569; font-size: 0.95rem; line-height: 1.6;">
+        <p>
+          <strong>Report Chapter 7.3:</strong> The lost items entered in the database are displayed on the <code>/items/</code> page. Each record is shown as one list item by the template loop. The Lost Items page displays items reported as lost in the college with their names and locations.
+        </p>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         SCREEN 6: DASHBOARD
+         ===================================================================== -->
+    <section id="screen-dashboard" class="app-screen">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px;">
+        <div>
+          <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--text);">Pavithran V &mdash; Dashboard</h1>
+          <p style="color: var(--text-muted); font-size: 0.92rem;">Student ID: 420423104056 &bull; Adhiparasakthi Engineering College</p>
+        </div>
+        <div style="display: flex; gap: 10px;">
+          <button class="btn-action btn-action-lost" style="padding: 8px 16px; font-size: 0.88rem;" onclick="switchTab('report-lost')">+ Report Lost</button>
+          <button class="btn-action btn-action-found" style="padding: 8px 16px; font-size: 0.88rem;" onclick="switchTab('report-found')">+ Report Found</button>
+        </div>
+      </div>
+
+      <div class="stats-cards-grid">
+        <div class="stat-card">
+          <div style="color: #64748b; font-size: 0.85rem; font-weight: 600;">TOTAL REPORTS</div>
+          <div class="stat-number" id="dash-total">6</div>
+        </div>
+        <div class="stat-card">
+          <div style="color: #ef4444; font-size: 0.85rem; font-weight: 600;">ACTIVE LOST</div>
+          <div class="stat-number" style="color: #ef4444;" id="dash-lost">3</div>
+        </div>
+        <div class="stat-card">
+          <div style="color: #16a34a; font-size: 0.85rem; font-weight: 600;">ACTIVE FOUND</div>
+          <div class="stat-number" style="color: #16a34a;" id="dash-found">2</div>
+        </div>
+        <div class="stat-card">
+          <div style="color: #64748b; font-size: 0.85rem; font-weight: 600;">RESOLVED / CLAIMED</div>
+          <div class="stat-number" style="color: #64748b;" id="dash-claimed">1</div>
+        </div>
+      </div>
+
+      <div style="background: #ffffff; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,0.04); overflow: hidden;">
+        <div style="padding: 16px 20px; border-bottom: 1px solid var(--border); background: #f8fafc; font-weight: 700; color: var(--text);">
+          Your Active Submitted Reports
+        </div>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.92rem;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border); color: #64748b; font-size: 0.82rem; text-transform: uppercase;">
+                <th style="padding: 12px 20px;">Item</th>
+                <th style="padding: 12px 20px;">Category</th>
+                <th style="padding: 12px 20px;">Place</th>
+                <th style="padding: 12px 20px;">Date</th>
+                <th style="padding: 12px 20px;">Status</th>
+                <th style="padding: 12px 20px; text-align: right;">Action</th>
+              </tr>
+            </thead>
+            <tbody id="dashboard-table-body">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Modal for Item Details & Claim -->
+  <div id="item-modal" style="display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.7); z-index: 200; align-items: center; justify-content: center; padding: 20px;">
+    <div style="background: #fff; border-radius: 14px; max-width: 600px; width: 100%; max-height: 90vh; overflow-y: auto; padding: 30px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); position: relative;">
+      <button onclick="closeItemModal()" style="position: absolute; top: 16px; right: 16px; border: none; background: none; font-size: 1.5rem; cursor: pointer; color: #64748b;">&times;</button>
+      <div id="modal-initials-badge" class="card-initials-badge" style="height: 100px; font-size: 2.2rem; margin-bottom: 16px;">BW</div>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <h2 id="modal-title" style="font-size: 1.5rem; font-weight: 800; color: var(--text);">Item Title</h2>
+        <span id="modal-status-badge" class="status-badge badge-lost">LOST</span>
+      </div>
+      <p id="modal-place" style="color: #64748b; font-size: 0.95rem; margin-bottom: 16px;"><i class="fa-solid fa-location-dot"></i> <span>Central Library</span></p>
+      
+      <div style="background: #f8fafc; padding: 14px; border-radius: 8px; margin-bottom: 16px; font-size: 0.88rem; color: #475569;">
+        <div><strong>Category:</strong> <span id="modal-category">Accessories</span></div>
+        <div style="margin-top: 4px;"><strong>Reported By:</strong> Pavithran V (Student)</div>
+      </div>
+
+      <p id="modal-desc" style="line-height: 1.6; color: #334155; margin-bottom: 24px;">Contains ID card and two bank cards...</p>
+
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button id="modal-claim-btn" onclick="claimModalItem()" class="btn-claim" style="font-size: 0.9rem;">
+          <i class="fa-solid fa-check"></i> Claim / Mark Resolved
+        </button>
+        <button onclick="closeItemModal()" style="padding: 10px 18px; border: 1px solid var(--border); background: #fff; border-radius: 8px; cursor: pointer;">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <p><strong>Smart Lost and Found System</strong> &mdash; Python Full Stack Development Internship</p>
+    <p style="margin-top: 4px; font-size: 0.8rem; color: #64748b;">
+      Novalis Infotech &bull; Pavithran V (420423104056) &bull; Adhiparasakthi Engineering College (Autonomous), Melmaruvathur
+    </p>
+  </footer>
+
+  <script>
+    // State items
+    let allItems = [
+      { id: 1, title: 'Black Wallet', place: 'Central Library', status: 'lost', category: 'Accessories', date: '2026-08-11', desc: 'Contains ID card and two bank cards. Brown stitching on the edge.', initials: 'BW', color: '#4f46e5' },
+      { id: 2, title: 'Blue Water Bottle', place: 'Canteen', status: 'found', category: 'Accessories', date: '2026-08-12', desc: 'Stainless steel insulated blue water bottle found on canteen table.', initials: 'BB', color: '#06b6d4' },
+      { id: 3, title: 'Android Phone', place: 'Block B, Room 204', status: 'lost', category: 'Electronics', date: '2026-08-10', desc: 'Black Android smartphone with clear protective cover.', initials: 'AP', color: '#ec4899' },
+      { id: 4, title: 'ID Card', place: 'Bus Stand', status: 'found', category: 'Documents', date: '2026-08-13', desc: 'College student ID card with lanyard found near college bus bay 3.', initials: 'IC', color: '#f59e0b' },
+      { id: 5, title: 'Umbrella', place: 'Main Gate', status: 'lost', category: 'Accessories', date: '2026-08-09', desc: 'Blue foldable umbrella left behind near main security guard desk.', initials: 'UM', color: '#10b981' },
+      { id: 6, title: 'Scientific Calculator', place: 'Exam Hall 3', status: 'claimed', category: 'Electronics', date: '2026-08-08', desc: 'Casio fx-991EX scientific calculator found after semester exam.', initials: 'SC', color: '#8b5cf6' }
+    ];
+
+    let currentModalItem = null;
+
+    function switchTab(tabName) {
+      document.querySelectorAll('.view-tab-btn').forEach(btn => btn.classList.remove('active'));
+      const activeBtn = document.getElementById(`tab-${tabName}`);
+      if (activeBtn) activeBtn.classList.add('active');
+
+      document.querySelectorAll('.app-screen').forEach(scr => scr.classList.remove('active-screen'));
+      const activeScr = document.getElementById(`screen-${tabName}`);
+      if (activeScr) activeScr.classList.add('active-screen');
+
+      if (tabName === 'search') renderSearchScreen();
+      if (tabName === 'dashboard') renderDashboardScreen();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function executeSearchFromHome() {
+      const q = document.getElementById('home-search-input').value.trim();
+      switchTab('search');
+      document.getElementById('interactive-search-box').value = q;
+      handleInteractiveFilter();
+    }
+
+    function renderSearchScreen(filtered) {
+      const container = document.getElementById('search-results-grid');
+      const emptyMsg = document.getElementById('no-search-results-portal');
+      const list = filtered || allItems;
+
+      container.innerHTML = '';
+      if (list.length === 0) {
+        emptyMsg.style.display = 'block';
+        return;
+      }
+      emptyMsg.style.display = 'none';
+
+      list.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'report-item-card';
+        card.innerHTML = `
+          <div class="card-initials-badge" style="background-color: ${item.color};">${item.initials}</div>
+          <div class="card-content">
+            <h3 class="card-title">${item.title}</h3>
+            <div class="card-place"><i class="fa-solid fa-location-dot"></i> <span>${item.place}</span></div>
+            <div style="font-size: 0.82rem; color: #64748b; margin-bottom: 10px;">
+              <span>Category: <strong>${item.category}</strong></span> &bull; <span>Date: ${item.date}</span>
+            </div>
+            <p style="font-size: 0.85rem; color: #475569; margin-bottom: 12px; line-height: 1.4;">${item.desc}</p>
+          </div>
+          <div class="card-footer">
+            <span class="status-badge badge-${item.status}">${item.status.toUpperCase()}</span>
+            <a href="#" class="card-view-link" onclick="openItemModal('${item.title}', '${item.place}', '${item.status}', '${item.category}', '${item.desc}', '${item.initials}', '${item.color}', ${item.id})">Details &rarr;</a>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function handleInteractiveFilter() {
+      const query = document.getElementById('interactive-search-box').value.toLowerCase().trim();
+      const status = document.getElementById('filter-status-select').value;
+      const cat = document.getElementById('filter-category-select').value;
+
+      const filtered = allItems.filter(item => {
+        const matchQ = !query || item.title.toLowerCase().includes(query) || item.place.toLowerCase().includes(query) || item.desc.toLowerCase().includes(query);
+        const matchStatus = !status || item.status === status;
+        const matchCat = !cat || item.category === cat;
+        return matchQ && matchStatus && matchCat;
+      });
+
+      renderSearchScreen(filtered);
+    }
+
+    function renderDashboardScreen() {
+      const tbody = document.getElementById('dashboard-table-body');
+      tbody.innerHTML = '';
+
+      let total = allItems.length;
+      let lost = allItems.filter(i => i.status === 'lost').length;
+      let found = allItems.filter(i => i.status === 'found').length;
+      let claimed = allItems.filter(i => i.status === 'claimed').length;
+
+      document.getElementById('dash-total').textContent = total;
+      document.getElementById('dash-lost').textContent = lost;
+      document.getElementById('dash-found').textContent = found;
+      document.getElementById('dash-claimed').textContent = claimed;
+
+      allItems.forEach(item => {
+        const tr = document.createElement('tr');
+        tr.style.borderBottom = '1px solid #f1f5f9';
+        tr.innerHTML = `
+          <td style="padding: 14px 20px; font-weight: 600; color: var(--text);">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span style="display: inline-block; width: 32px; height: 32px; border-radius: 6px; background-color: ${item.color}; color: #fff; font-weight: 700; text-align: center; line-height: 32px; font-size: 0.85rem;">
+                ${item.initials}
+              </span>
+              <span>${item.title}</span>
+            </div>
+          </td>
+          <td style="padding: 14px 20px; color: #64748b;">${item.category}</td>
+          <td style="padding: 14px 20px; color: #64748b;">${item.place}</td>
+          <td style="padding: 14px 20px; color: #64748b;">${item.date}</td>
+          <td style="padding: 14px 20px;">
+            <span class="status-badge badge-${item.status}">${item.status.toUpperCase()}</span>
+          </td>
+          <td style="padding: 14px 20px; text-align: right;">
+            <a href="#" style="color: var(--primary); font-weight: 600; text-decoration: none;" onclick="openItemModal('${item.title}', '${item.place}', '${item.status}', '${item.category}', '${item.desc}', '${item.initials}', '${item.color}', ${item.id})">View &rarr;</a>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function handleItemSubmit(e, status) {
+      e.preventDefault();
+      const isLost = status === 'lost';
+      const title = document.getElementById(isLost ? 'rep-item' : 'found-item').value.trim();
+      const place = document.getElementById(isLost ? 'rep-place' : 'found-place').value.trim();
+      const cat = document.getElementById(isLost ? 'rep-category' : 'found-category').value;
+      const date = document.getElementById(isLost ? 'rep-date' : 'found-date').value;
+      const desc = document.getElementById(isLost ? 'rep-desc' : 'found-desc').value;
+
+      if (!title || !place) {
+        alert('Please fill in the item name and place!');
+        return;
+      }
+
+      const words = title.split(' ');
+      const initials = words.length >= 2 ? (words[0][0] + words[1][0]).toUpperCase() : title.slice(0, 2).toUpperCase();
+      const color = isLost ? '#4f46e5' : '#06b6d4';
+
+      const newItem = {
+        id: Date.now(),
+        title, place, status, category: cat, date, desc, initials, color
+      };
+
+      allItems.unshift(newItem);
+      alert(`Success! Your report for "${title}" has been saved with status: ${status.toUpperCase()}`);
+      switchTab('dashboard');
+    }
+
+    function openItemModal(title, place, status, category, desc, initials, color, id) {
+      currentModalItem = id ? allItems.find(i => i.id === id) : { title, place, status, category, desc, initials, color };
+      document.getElementById('modal-initials-badge').textContent = initials;
+      document.getElementById('modal-initials-badge').style.backgroundColor = color;
+      document.getElementById('modal-title').textContent = title;
+      document.getElementById('modal-place').querySelector('span').textContent = place;
+      document.getElementById('modal-category').textContent = category;
+      document.getElementById('modal-desc').textContent = desc;
+
+      const badge = document.getElementById('modal-status-badge');
+      badge.className = `status-badge badge-${status}`;
+      badge.textContent = status.toUpperCase();
+
+      const claimBtn = document.getElementById('modal-claim-btn');
+      if (status === 'claimed') {
+        claimBtn.style.display = 'none';
+      } else {
+        claimBtn.style.display = 'inline-flex';
+      }
+
+      document.getElementById('item-modal').style.display = 'flex';
+    }
+
+    function closeItemModal() {
+      document.getElementById('item-modal').style.display = 'none';
+    }
+
+    function claimModalItem() {
+      if (currentModalItem) {
+        currentModalItem.status = 'claimed';
+        alert(`Item "${currentModalItem.title}" has been marked as CLAIMED and resolved!`);
+        closeItemModal();
+        renderDashboardScreen();
+        if (document.getElementById('screen-search').classList.contains('active-screen')) {
+          renderSearchScreen();
+        }
+      }
+    }
+  </script>
+</body>
+</html>
